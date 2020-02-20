@@ -14,9 +14,7 @@ SECTIONS
 	. = 0x7C00 + 510;
 	.end : {boot.o (.end)}
 
-	.= 0x7c00 + 512;
-
-	.loader : {loader.o}
-	.fat12 : {fat12.o}
-	.bios : {bios.o}
+	.text : {*(.text)}
+	.data : {*(.data)}
+	.bss : {*(.bss)}
 }

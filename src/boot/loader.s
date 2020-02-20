@@ -3,6 +3,13 @@
 .globl loader
 
 loader:
+/*
+    //开启VBE
+    mov $0x4f02, %ax         # 功能号0x0  
+    mov $0x4180, %bx        # 显示模式  
+    int $0x10  
+*/
+
 //准备切换到x86_32
     //开启a20
     mov $0x2401, %ax
@@ -30,7 +37,6 @@ x86_32:
     mov %ax, %fs
     mov %ax, %gs
     mov %ax, %ss
-
 //准备切换到x86_64
     //设置临时页面录
     movl $0x91007, (0x90000)
@@ -83,7 +89,7 @@ x86_64:
     mov %ax, %ss
     
     //读取内核
-    callq fat12_read_kernel
+    callq loader_kernel
     jmp *%rax
 
 

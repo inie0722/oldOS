@@ -3,10 +3,13 @@ OUTPUT_FORMAT("elf64-x86-64", "elf64-x86-64", "elf64-x86-64")
 OUTPUT_ARCH(i386:x86-64)
 
 
-ENTRY(main)
+ENTRY(_start)
 
 SECTIONS
 {
 	. = 0x100000;
-	.kernel : {kernel.o}
+	.text : {head.o(.text)}
+	.data : {head.o(.data)}
+	.bss : {head.o(.bss)}
+	.main : {kernel.o}
 }

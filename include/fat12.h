@@ -47,14 +47,14 @@ typedef struct
 
 #pragma pack()
 
-DIR_entry *fat12_search_file(BPB *bpb, DIR_entry *entry, char *DIR_name);
+extern DIR_entry *fat12_search_file(BPB *bpb, DIR_entry *entry, char *DIR_name);
 
-void fat12_read_file(BPB *bpb, uint8_t *fat, DIR_entry *entry, void *buf);
+extern void fat12_read_file(BPB *bpb, uint8_t *fat, DIR_entry *entry, void *buf);
 
-void fat12_get_root(BPB *bpb, void *buf);
+extern void fat12_get_root(BPB *bpb, void *buf);
 
-void fat12_get_fat(BPB *bpb, void *buf);
+extern void fat12_get_fat(BPB *bpb, void *buf);
 
-void fat12_read_disk(uint32_t LBA, uint8_t count, void *buf);
+extern void fat12_read_disk(uint32_t LBA, uint8_t count, void *buf);
 
-void *fat12_read_kernel();
+extern void *fat12_read_kernel();
