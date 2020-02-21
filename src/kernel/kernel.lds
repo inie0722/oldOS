@@ -11,5 +11,7 @@ SECTIONS
 	.text : {head.o(.text)}
 	.data : {head.o(.data)}
 	.bss : {head.o(.bss)}
-	.main : {kernel.o}
+	.main : {*(.text)}
+	.main : {*(.data)}
+	.main : {*(.bss)}
 }

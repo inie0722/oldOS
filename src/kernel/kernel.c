@@ -1,18 +1,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef struct
-{
-    volatile uint64_t *PML4E;
-    volatile uint64_t *PDPTE;
-    volatile uint64_t *PDE;
-
-    volatile uint64_t *GDT;
-    volatile uint64_t *IDT;
-    volatile uint64_t *TSS;
-} Info;
-
-extern Info info;
+#include "bios.h"
+#include "info.h"
+#include "lnterrupt.h"
 
 void init_page()
 {
@@ -41,8 +32,18 @@ void init_page()
 
 int main()
 {
+    bios_clear();
     init_page();
+    bios_message("Start InOS successfully\n", OK);
+
+    init_idt();
+
+    int *p = (int *)0xfffffffffff;
+    *p = 32;
 
     while (1)
-        ;
+    {
+    };
+
+    return 0;
 }

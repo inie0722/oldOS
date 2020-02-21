@@ -10,7 +10,6 @@ extern void _start();
 void *loader_kernel()
 {
     bios_clear();
-    bios_puts("Ready to load the kernel\n", WHITE, false);
 
     BPB *bpb = (BPB *)_start;
 
@@ -25,7 +24,7 @@ void *loader_kernel()
         fat12_read_file(bpb, fat, kernel, (void *)ORG);
     else
     {
-        bios_puts("no file found kernel.bin", RED, true);
+        bios_message("no file found kernel.bin\n", ERROR);
         bios_exit();
     }
 

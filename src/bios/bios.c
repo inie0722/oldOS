@@ -6,7 +6,7 @@
 
 #define VIDEO_MEM (char *)0xb8000
 #define MAX_ROWS 25
-#define MAX_COLUMNS 80
+#define MAX_COLUMNS 160
 
 static volatile char *video_mem = VIDEO_MEM;
 
@@ -21,15 +21,15 @@ void bios_clear()
     video_mem = VIDEO_MEM;
 }
 
-void bios_puts(const char *str, uint8_t colour, bool flicker)
+void bios_puts(const char *str, uint8_t f_color, uint8_t b_color, bool flicker)
 {
-    char Font = colour + (flicker << 7);
+    char Font = f_color + (b_color << 4) + (flicker << 7);
     while (*str)
     {
         if (*str == '\n')
         {
             ptrdiff_t index = video_mem - VIDEO_MEM;
-            video_mem += MAX_COLUMNS * 2 - index % MAX_COLUMNS;
+            video_mem += MAX_COLUMNS - index % MAX_COLUMNS;
             ++str;
             continue;
         }
@@ -44,6 +44,16 @@ void bios_puts(const char *str, uint8_t colour, bool flicker)
             video_mem = VIDEO_MEM;
         }
     }
+}
+
+const char *Prefix[] = {"[  Ok   ]: ", "[Warning]: ", "[ Error ]: "};
+const uint8_t f_color[] = {BRIGHT_GREEN, BRIGHT_YELLOW, BRIGHT_RED};
+const bool flicker[] = {false, false, true};
+
+void bios_message(const char *mes, int level)
+{
+    bios_puts(Prefix[level], f_color[level], DARK_BLACK, flicker[level]);
+    bios_puts(mes, f_color[level], DARK_BLACK, flicker[level]);
 }
 
 void bios_read_disk(uint32_t LBA, uint8_t count, void *buf)
@@ -108,7 +118,7 @@ void bios_read_disk(uint32_t LBA, uint8_t count, void *buf)
 
 void bios_exit()
 {
-    bios_puts("BIOS has exited\n", RED, false);
+    bios_message("BIOS has exited\n", ERROR);
     while (1)
         ;
 }

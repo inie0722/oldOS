@@ -1,6 +1,6 @@
 CC = gcc
 LD = ld
-D = -ffreestanding -fno-asynchronous-unwind-tables -fno-pic -nostdlib -O3 -Wall -I ./include
+D = -ffreestanding -fno-asynchronous-unwind-tables -fno-strict-aliasing -fno-pic -nostdlib -O3 -Wall -I ./include
 
 SRC = src
 
@@ -25,7 +25,7 @@ bios.o: ./src/bios/bios.c
 fat12.o: ./src/fat12/fat12.c
 	$(CC) $(D) -c $< -o $@
 
-KERNEL_OBJ = kernel.o head.o bios.o
+KERNEL_OBJ = kernel.o head.o bios.o lnterrupt_1.o lnterrupt_2.o
 kernel.bin: $(KERNEL_OBJ)
 	$(LD) -T ./src/kernel/kernel.lds $(KERNEL_OBJ) -o kernel.elf
 	objcopy -O binary kernel.elf $@
@@ -33,7 +33,13 @@ kernel.bin: $(KERNEL_OBJ)
 kernel.o: ./src/kernel/kernel.c
 	$(CC) $(D) -c $< -o $@
 
-head.o: ./src/kernel/head.s
+head.o: ./src/kernel/head.S
+	$(CC) $(D) -c $< -o $@
+
+lnterrupt_1.o: ./src/kernel/lnterrupt.S
+	$(CC) $(D) -c $< -o $@
+
+lnterrupt_2.o: ./src/kernel/lnterrupt.c
 	$(CC) $(D) -c $< -o $@
 
 .PHONY : clean
