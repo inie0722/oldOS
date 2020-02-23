@@ -1,37 +1,60 @@
 #include "stdlib.h"
 
-char *itoa(int num, char *str, int radix)
-{ /*索引表*/
-    char index[] = "0123456789ABCDEF";
-    unsigned unum; /*中间变量*/
-    int i = 0, j, k;
-    /*确定unum的值*/
-    if (radix == 10 && num < 0) /*十进制负数*/
+char *itoa(unsigned long val, char *buf, char radix)
+{
+
+    char *p = buf;
+    char temp;
+    unsigned digval;
+
+    char a = 'a';
+    if (radix == 'x')
     {
-        unum = (unsigned)-num;
-        str[i++] = '-';
+        radix = 16;
+        a = 'a';
+    }
+    else if (radix == 'X')
+    {
+        radix = 16;
+        a = 'A';
+    }
+    else if (radix == 'd')
+    {
+        radix = 10;
+        if (*(long *)&val < 0)
+        {
+            *p++ = '-';
+            val = -(long)val;
+        }
     }
     else
-        unum = (unsigned)num; /*其他情况*/
-    /*转换*/
+    {
+        radix = 10;
+    }
+
+    char *firstdig = p;
+
     do
     {
-        str[i++] = index[unum % (unsigned)radix];
-        unum /= radix;
-    } while (unum);
-    str[i] = '\0';
-    /*逆序*/
-    if (str[0] == '-')
-        k = 1; /*十进制负数*/
-    else
-        k = 0;
+        digval = (unsigned)(val % radix);
+        val /= radix;
 
-    for (j = k; j <= (i - 1) / 2; j++)
+        if (digval > 9)
+            *p++ = (char)(digval - 10 + a);
+        else
+            *p++ = (char)(digval + '0');
+    } while (val > 0);
+
+    *p-- = '\0';
+
+    do
     {
-        char temp;
-        temp = str[j];
-        str[j] = str[i - 1 + k - j];
-        str[i - 1 + k - j] = temp;
-    }
-    return str;
+        temp = *p;
+        *p = *firstdig;
+        *firstdig = temp;
+        --p;
+        ++firstdig;
+    } while (firstdig < p);
+
+    return buf;
 }

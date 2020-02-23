@@ -1,36 +1,61 @@
+#include "printk.h"
+#include "stdlib.h"
+
+#include "bios.h"
+
 #include <stdarg.h> //可变参数使用所需头文件
-#include <stdio.h>
-#include <stdint.h>
+#include <stddef.h>
 
-//可变参数( ... )的前面，必须需要一个有名字的变量，通常值为可变参数的个数
-void func(int a, int n, ...)
+void printk(const char *fmt, ...)
 {
-    int i = 0;
-    va_list ap; //可变参数列表
+    va_list valist;
+    va_start(valist, fmt);
 
-    //获得不定参数的首地址
-    //第一个参数为可变参数列表变量
-    //第二个参数必须为可变参数前面的最后一个参数值，如这里的n
-    va_start(ap, n);
-
-    for (i = 0; i < n; ++i)
+    char buf[32];
+    size_t i = 0;
+    while (1)
     {
-        // 获得每一个可变参数
-        // 每次调用va_arg都会改变ap值，使得后续的参数值能被依次添加
-        //第一个参数为可变参数列表变量
-        //第二个参数为类型
-        int num = va_arg(ap, int);
-        printf("num = %d\n", num);
+        while (i < 32 && *fmt != '%' && *fmt != '\0')
+        {
+            buf[i] = *fmt++;
+            ++i;
+        }
+
+        buf[i] = '\0';
+        bios_puts(buf, BRIGHT_WHITE, DARK_BLACK, false);
+
+        if (*fmt == '\0')
+        {
+            break;
+        }
+        else
+        {
+            ++fmt;
+            if (*fmt == 's')
+            {
+                bios_puts(va_arg(valist, const char *), BRIGHT_WHITE, DARK_BLACK, false);
+                ++fmt;
+                continue;
+            }
+            else if (*fmt == 'c')
+            {
+                buf[0] = va_arg(valist, int);
+                i = 1;
+                ++fmt;
+                continue;
+            }
+            else if (*fmt == 'l')
+            {
+                itoa((unsigned long)va_arg(valist, long), buf, *++fmt);
+            }
+            else
+            {
+                itoa((unsigned long)va_arg(valist, int), buf, *fmt);
+            }
+            ++fmt;
+            i = 0;
+            bios_puts(buf, BRIGHT_WHITE, DARK_BLACK, false);
+        }
     }
-
-    //参数获取完毕
-    va_end(ap);
-}
-
-int main()
-{
-    printf("%d\n", 0b1111);
-    func(1, 3, 10, 20, 30);
-
-    return 0;
+    va_end(valist);
 }

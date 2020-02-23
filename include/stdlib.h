@@ -1,3 +1,3 @@
 #pragma once
 
-extern char *itoa(int num, char *str, int radix);
+extern char *itoa(unsigned long val, char *buf, char radix);
