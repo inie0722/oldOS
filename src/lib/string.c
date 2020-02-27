@@ -48,7 +48,7 @@ void *memmove(void *dest, const void *src, size_t n)
     return dest;
 }
 
-void *memset(void *str, int c, size_t n)
+__attribute__((optimize("O0"))) void *memset(void *str, int c, size_t n)
 {
     for (size_t i = 0; i < n; i++)
     {
@@ -71,7 +71,7 @@ char *strcat(char *dest, const char *src)
     return dest;
 }
 
-char *strchr(const char *str, int c)
+const char *strchr(const char *str, int c)
 {
     while (*str && *str != (char)c)
     {
@@ -112,13 +112,9 @@ int strcmp(const char *str1, const char *str2)
 
 char *strcpy(char *dest, const char *src)
 {
-    size_t i = 0;
-    while (*src)
-    {
-        dest[i] = src[i];
-        ++src;
-    }
+    char *cp = dest;
+    while ((*cp++ = *src++))
+        ;
 
-    dest[i] = src[i];
     return dest;
 }

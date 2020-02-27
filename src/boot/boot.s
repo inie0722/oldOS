@@ -35,10 +35,7 @@ _start:
 
 boot:
 //将loader fat12 加载到内存中
-
-//初始化寄存器
-    mov $org, %sp
-    mov $org, %bp
+    
 //设置读取扇区数量
     mov $0x1f2, %dx
     mov $0x08, %al

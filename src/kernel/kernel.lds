@@ -14,4 +14,5 @@ SECTIONS
 	.main : {*(.text)}
 	.main : {*(.data)}
 	.main : {*(.bss)}
+	.end : {*(.end)}
 }

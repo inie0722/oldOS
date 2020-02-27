@@ -9,7 +9,22 @@ loader:
     mov $0x4180, %bx        # 显示模式  
     int $0x10  
 */
+    //读取内存
+    mov $0, %bx
+    mov %bx, %es 
+    //获取内存信息
+    mov $0x7000, %di 
 
+start_probe:
+    mov $0xe820, %ax
+    mov $0x534d4150, %edx
+    mov $20, %cx
+    int $0x15
+    add $20, %di
+    cmp $0, %bx
+    jne start_probe
+
+.code16  
 //准备切换到x86_32
     //开启a20
     mov $0x2401, %ax
@@ -87,7 +102,11 @@ x86_64:
     mov %ax, %fs
     mov %ax, %gs
     mov %ax, %ss
-    
+
+    //初始化寄存器
+    mov $0x7c00, %rsp
+    mov $0x7c00, %rbp    
+
     //读取内核
     callq loader_kernel
     jmp *%rax

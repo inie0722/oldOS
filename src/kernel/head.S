@@ -14,7 +14,8 @@ _start:
     mov %ax, %gs
     mov %ax, %ss
 
-	mov $0x7e00, %rsp
+	mov $0xa0000, %rsp
+	mov $0xa0000, %rbp
 
 	//跳转到内核
 	leaq main, %rax
@@ -33,18 +34,6 @@ info:
 .quad IDT
 .quad TSS
 
-.org 0x1000
-PML4E:
-	.fill 512, 8, 0
-
-.org 0x2000
-PDPTE:
-	.fill 512, 8, 0
-
-.org 0x3000
-PDE:
-	.fill 512, 8, 0
-
 GDT:
 	.quad 0x0
 	.quad 0x0020980000000000 #64位 内核 代码段 
@@ -54,6 +43,18 @@ GDT:
 GDT_ptr:
 	.word . - GDT - 1
 	.quad GDT
+
+.org 0x1000
+PML4E:
+	.fill 512, 8, 0
+.org 0x2000
+PDPTE:
+	.fill 512, 8, 0
+
+.org 0x3000
+PDE:
+	.fill 512, 8, 0
+
 IDT:
 	.fill 512, 8, 0
 IDT_ptr:
